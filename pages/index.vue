@@ -53,10 +53,4 @@
 </script>
 
 <style>
-  .container {
-    padding: 100px;
-  }
-  .error {
-    color: red;
-  }
 </style>
