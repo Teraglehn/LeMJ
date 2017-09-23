@@ -1,51 +1,96 @@
 <template>
-  <div class="container">
-    <h1>Please login to see the secret content</h1>
-    <form v-if="!$store.state.authUser" @submit.prevent="login">
-      <p class="error" v-if="formError">{{ formError }}</p>
-      <p><i>To login, use <b>demo</b> as username and <b>demo</b> as password.</i></p>
-      <p>Username: <input type="text" v-model="formUsername" name="username" /></p>
-      <p>Password: <input type="password" v-model="formPassword" name="password" /></p>
-      <button type="submit">Login</button>
-    </form>
-    <div v-else>
-      Hello {{ $store.state.authUser.username }}!
-      <pre>I am the secret content, I am shown only when the use is connected.</pre>
-      <p><i>You can also refresh this page, you'll still be connected!</i></p>
-      <button @click="logout">Logout</button>
+  <div class="columns is-centered">
+    <div class="column is-half-desktop">
+      <section class="hero">
+        <div class="hero-body">
+          <div class="container">
+            <h1 class="title">
+              Bienvenue sur LeMJ
+            </h1>
+            <h2 class="subtitle">
+              Connectez vous pour accéder à l'application
+            </h2>
+          </div>
+        </div>
+      </section>
+      <form @submit.prevent="login">
+        <div class="field">
+          <label class="label">Identifiant</label>
+          <div class="control has-icons-left has-icons-right">
+            <input class="input" type="text" v-model="form.username">
+            <span class="icon is-small is-left">
+            <i class="fa fa-user"></i>
+          </span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Mot de passe</label>
+          <div class="control has-icons-left has-icons-right">
+            <input class="input" type="password" v-model="form.password">
+            <span class="icon is-small is-left">
+            <i class="fa fa-key"></i>
+          </span>
+          </div>
+        </div>
+        <div class="field is-grouped is-grouped-centered">
+          <p class="control">
+            <a v-on:click="login" class="button is-primary">
+              Connexion
+            </a>
+          </p>
+          <p v-on:click="register" class="control">
+            <a class="button is-light">
+              S'enregistrer
+            </a>
+          </p>
+        </div>
+      </form>
     </div>
-    <p><nuxt-link to="/secret">Super secret page</nuxt-link></p>
   </div>
 </template>
 
 <script>
   export default {
+    middleware: 'notauth',
+    layout: 'index',
+    head () {
+      return {
+        title: 'LeMJ - Connexion'
+      }
+    },
+    scrollToTop: true,
     data () {
       return {
-        formError: null,
-        formUsername: '',
-        formPassword: ''
+        form: {
+          username: '',
+          password: ''
+        }
       }
     },
     methods: {
+      async register () {
+        try {
+          await this.$store.dispatch('register', {
+            username: this.form.username,
+            password: this.form.password
+          })
+        } catch (e) {
+        }
+      },
       async login () {
         try {
           await this.$store.dispatch('login', {
-            username: this.formUsername,
-            password: this.formPassword
+            username: this.form.username,
+            password: this.form.password
           })
-          this.formUsername = ''
-          this.formPassword = ''
-          this.formError = null
+          this.$router.push('application')
         } catch (e) {
-          this.formError = e.message
         }
       },
       async logout () {
         try {
           await this.$store.dispatch('logout')
         } catch (e) {
-          this.formError = e.message
         }
       }
     }

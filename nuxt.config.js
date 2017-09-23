@@ -1,6 +1,7 @@
 module.exports = {
   css: [
-    'bulma'
+    '@assets/css/bulma.css',
+    '@assets/css/font-awesome.min.css'
   ],
   /*
   ** Headers of the page

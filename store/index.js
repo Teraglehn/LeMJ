@@ -17,7 +17,7 @@ export const actions = {
     }
   },
   login ({ commit }, { username, password }) {
-    return axios.post('/api/login', {
+    return axios.post('/api/user/login', {
       username,
       password
     })
@@ -30,9 +30,23 @@ export const actions = {
         }
       })
   },
+  register ({ commit }, { username, password }) {
+    return axios.post('/api/user/register', {
+      username,
+      password
+    })
+      .then((res) => {
+        commit('SET_USER', res.data)
+      })
+      .catch((error) => {
+        if (error.response.status === 401) {
+          throw new Error(error.response.data.message)
+        }
+      })
+  },
 
   logout ({ commit }) {
-    return axios.post('/api/logout')
+    return axios.post('/api/user/logout')
       .then(() => {
         commit('SET_USER', null)
       })
