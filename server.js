@@ -3,11 +3,23 @@ const bodyParser = require('body-parser')
 const session = require('express-session')
 const app = require('express')()
 
+// MongoDB database
+const monk = require('monk')
+const db = monk('localhost:27017/lemj')
+
 const host = process.env.HOST || '127.0.0.1'
 const port = process.env.PORT || '3000'
 
+const api = require('./routes/api')
+
 // Body parser, to access req.body
 app.use(bodyParser.json())
+
+// Make our db accessible to our router
+app.use(function (req, res, next) {
+  req.db = db
+  next()
+})
 
 // Sessions to create req.session
 app.use(session({
@@ -17,20 +29,7 @@ app.use(session({
   cookie: { maxAge: 60000 }
 }))
 
-// POST /api/login to log in the user and add him to the req.session.authUser
-app.post('/api/login', function (req, res) {
-  if (req.body.username === 'demo' && req.body.password === 'demo') {
-    req.session.authUser = { username: 'demo' }
-    return res.json({ username: 'demo' })
-  }
-  res.status(401).json({ message: 'Bad credentials' })
-})
-
-// POST /api/logout to log out the user and remove it from the req.session
-app.post('/api/logout', function (req, res) {
-  delete req.session.authUser
-  res.json({ ok: true })
-})
+app.use('/api', api)
 
 // Import and Set Nuxt.js options
 let config = require('./nuxt.config.js')
@@ -45,5 +44,6 @@ if (config.dev) {
 
 app.use(nuxt.render)
 
-app.listen(3000)
-console.log('Server is listening on http://localhost:3000')
+app.listen(port, host, function () {
+  console.log('Server started on port %s:%d in %s mode', host, port, app.settings.env)
+})

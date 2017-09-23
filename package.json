@@ -18,6 +18,8 @@
     "bulma": "^0.5.3",
     "express": "^4.15.4",
     "express-session": "^1.15.5",
+    "mongodb": "^2.2.31",
+    "monk": "^6.0.4",
     "node-sass": "^4.5.3",
     "nuxt": "^1.0.0-rc11",
     "sass-loader": "^6.0.6"
