@@ -7,7 +7,7 @@ const app = require('express')()
 const monk = require('monk')
 const db = monk('localhost:27017/lemj')
 
-const host = process.env.HOST || '127.0.0.1'
+const host = process.env.HOST || 'localhost'
 const port = process.env.PORT || '3000'
 
 const api = require('./routes/api')
@@ -44,6 +44,5 @@ if (config.dev) {
 
 app.use(nuxt.render)
 
-app.listen(port, host, function () {
-  console.log('Server started on port %s:%d in %s mode', host, port, app.settings.env)
-})
+app.listen(port)
+console.log('Server started on port %s:%d in %s mode', host, port, app.settings.env)
