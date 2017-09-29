@@ -1,19 +1,27 @@
 const { Nuxt, Builder } = require('nuxt')
 const bodyParser = require('body-parser')
 const session = require('express-session')
+const cookieParser = require('cookie-parser')
+const MongoDBStore = require('connect-mongodb-session')(session)
 const app = require('express')()
+
+// Import and Set Nuxt.js options
+let config = require('./nuxt.config.js')
 
 // MongoDB database
 const monk = require('monk')
-const db = monk('localhost:27017/lemj')
+const db = monk(config.env.MONGODB_URL)
 
-const host = process.env.HOST || 'localhost'
-const port = process.env.PORT || '3000'
+const store = new MongoDBStore({
+  uri: config.env.MONGODB_URL,
+  collection: 'sessions'
+})
 
 const api = require('./routes/api')
 
 // Body parser, to access req.body
 app.use(bodyParser.json())
+app.use(cookieParser())
 
 // Make our db accessible to our router
 app.use(function (req, res, next) {
@@ -23,16 +31,33 @@ app.use(function (req, res, next) {
 
 // Sessions to create req.session
 app.use(session({
-  secret: 'super-secret-key',
+  secret: 'T&U%mg?p*%,;??q[6Z{2nN4:Qy$8d#QSR2C\\!2/e6.S$!2-2}&ZF`>T`ASVuxQCG',
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 60000 }
+  store: store,
+  cookie: {
+    path: '/',
+    maxAge: 60000
+  }
 }))
+
+app.use(function (req, res, next) {
+  if (req.cookies && req.cookies.autoLogin) {
+    let db = req.db
+    let users = db.get('users')
+
+    users.findOne({id: req.cookies.autoLogin}, {})
+      .then((user) => {
+        delete user.id
+        req.session.authUser = user
+      })
+  }
+
+  next()
+})
 
 app.use('/api', api)
 
-// Import and Set Nuxt.js options
-let config = require('./nuxt.config.js')
 config.dev = !(process.env.NODE_ENV === 'production')
 
 let nuxt = new Nuxt(config)
@@ -43,6 +68,9 @@ if (config.dev) {
 }
 
 app.use(nuxt.render)
+
+const host = config.env.HOST || 'localhost'
+const port = config.env.PORT || '3000'
 
 app.listen(port)
 console.log('Server started on port %s:%d in %s mode', host, port, app.settings.env)

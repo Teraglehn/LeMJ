@@ -1,7 +1,7 @@
 <template>
   <div class="columns">
     <div class="column">
-      Bienvenu dans l'application
+      Voir la session
     </div>
   </div>
 </template>

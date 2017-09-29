@@ -1,7 +1,7 @@
 <template>
   <div class="columns">
     <div class="column">
-      Bienvenu dans l'application
+      <a href="sheet/create" class="button">Créer une feuille de personnage</a>
     </div>
   </div>
 </template>

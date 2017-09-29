@@ -1,7 +1,8 @@
 <template>
   <div class="columns">
     <div class="column">
-      Bienvenu dans l'application
+      Voir une campagne
+      <nuxt-link to="campaign/create">Créer</nuxt-link>
     </div>
   </div>
 </template>

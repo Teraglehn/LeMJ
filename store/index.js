@@ -16,10 +16,11 @@ export const actions = {
       commit('SET_USER', req.session.authUser)
     }
   },
-  login ({ commit }, { username, password }) {
+  login ({ commit }, { username, password, remember }) {
     return axios.post('/api/user/login', {
-      username,
-      password
+      username: username,
+      password: password,
+      remember: remember
     })
       .then((res) => {
         commit('SET_USER', res.data)

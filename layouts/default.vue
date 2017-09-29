@@ -1,8 +1,21 @@
 <template>
-  <div class="container is-widescreen">
-    <nuxt/>
+  <div>
+    <navbar></navbar>
+    <div class="container">
+      <nuxt/>
+    </div>
   </div>
 </template>
+
+<script>
+  import Navbar from '../components/Navbar.vue'
+
+  export default {
+    components: {
+      Navbar
+    }
+  }
+</script>
 
 <style>
 html {

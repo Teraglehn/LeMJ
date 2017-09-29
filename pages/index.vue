@@ -32,6 +32,10 @@
           </span>
           </div>
         </div>
+        <label class="checkbox">
+          <input type="checkbox" v-model="form.remember">
+          Remember me
+        </label>
         <div class="field is-grouped is-grouped-centered">
           <p class="control">
             <a v-on:click="login" class="button is-primary">
@@ -63,7 +67,8 @@
       return {
         form: {
           username: '',
-          password: ''
+          password: '',
+          remember: false
         }
       }
     },
@@ -81,15 +86,10 @@
         try {
           await this.$store.dispatch('login', {
             username: this.form.username,
-            password: this.form.password
+            password: this.form.password,
+            remember: this.form.remember
           })
           this.$router.push('application')
-        } catch (e) {
-        }
-      },
-      async logout () {
-        try {
-          await this.$store.dispatch('logout')
         } catch (e) {
         }
       }

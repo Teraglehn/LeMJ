@@ -1,7 +1,7 @@
 <template>
   <div class="columns">
     <div class="column">
-      Bienvenu dans l'application
+      Parties de la campagne
     </div>
   </div>
 </template>
