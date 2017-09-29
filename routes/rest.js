@@ -3,6 +3,14 @@ let router = express.Router()
 
 let _ = require('lodash')
 
+router.use((req, res, next) => {
+  if (!req.session || !req.session.authUser) {
+    res.status(403).json({message: 'Unauthorize'})
+  } else {
+    next()
+  }
+})
+
 router.route('/:ressource')
   .get(function (req, res) {
     let db = req.db
