@@ -37,10 +37,24 @@ module.exports = {
           exclude: /(node_modules)/
         })
       }
-    }
+    },
+    postcss: {
+      plugins: {
+        'postcss-custom-properties': false
+      }
+    },
+    vendor: [
+      'axios'
+    ]
   },
   env: {
-    BASE_URL: 'http://localhost:3000',
+    BASE_URL: 'http://192.168.0.10:3000',
     MONGODB_URL: 'mongodb://localhost:27017/lemj'
+  },
+  axios: {
+    credentials: true,
+    init (axios, context) {
+      axios.defaults.baseURL = context.env.BASE_URL;
+    }
   }
 }

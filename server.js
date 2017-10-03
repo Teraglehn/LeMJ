@@ -3,6 +3,8 @@ const bodyParser = require('body-parser')
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
 const MongoDBStore = require('connect-mongodb-session')(session)
+const cors = require('cors')
+
 const app = require('express')()
 
 // Import and Set Nuxt.js options
@@ -23,6 +25,12 @@ const api = require('./routes/api')
 app.use(bodyParser.json())
 app.use(cookieParser())
 
+app.use(cors({
+  origin: [config.env.BASE_URL],
+  methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
+  credentials: true // enable set cookie
+}))
+
 // Make our db accessible to our router
 app.use(function (req, res, next) {
   req.db = db
@@ -36,8 +44,7 @@ app.use(session({
   saveUninitialized: false,
   store: store,
   cookie: {
-    path: '/',
-    maxAge: 60000
+    maxAge: 1000 * 60 * 60
   }
 }))
 
@@ -69,7 +76,7 @@ if (config.dev) {
 
 app.use(nuxt.render)
 
-const host = config.env.HOST || 'localhost'
+const host = config.env.HOST || '192.168.0.10'
 const port = config.env.PORT || '3000'
 
 app.listen(port)
