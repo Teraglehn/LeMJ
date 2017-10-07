@@ -9,11 +9,22 @@ router.route('/')
     let resources = db.get('campaigns')
 
     let user = req.session.authUser
-    let userId = user._id
+    let userId = user._id.toString()
 
-    resources.find({$or: [{mj: '' + userId}, {visibility: true}]}, {})
+    resources.find({$or: [{mj: '' + userId}]}, {})
       .then((resource) => {
-        res.json(resource)
+        let response = _.reduce(resource, (acc, campaign) => {
+          if (userId === campaign.mj) {
+            acc.mj.push(campaign)
+          }
+          return acc
+        }, {
+          mj: [],
+          invite: [],
+          running: [],
+          archive: []
+        })
+        res.json(response)
       })
       .catch((e) => {
         res.send(500)
@@ -67,16 +78,13 @@ router.route('/id/:id')
     let db = req.db
     let campaigns = db.get('campaigns')
 
-    try {
-      let campaign = await campaigns.findOne({_id: req.param('id')}, {})
+    let user = req.session.authUser
+    let userId = user._id.toString()
 
-      if (!campaign.mj === req.session.authUser._id) {
-        res.send(403)
-      } else {
-        res.json(await campaigns.findOneAndDelete({_id: req.param('id')}, {}))
-      }
+    try {
+      res.json(await campaigns.findOneAndDelete({$and: [{_id: req.param('id')}, {mj: userId}]}, {}))
     } catch (e) {
-      res.send(500)
+      res.send(403)
     }
   })
 

@@ -12,7 +12,13 @@
                   </h1>
                 </div>
                 <div class="level-right">
-                  <a href="campaign/create" class="button is-large is-medium">
+                  <a href="campaign/search" class="button is-medium">
+                    <span class="icon">
+                      <i class="fa fa-search"></i>
+                    </span>
+                    <span>Chercher</span>
+                  </a>
+                  <a href="campaign/create" class="button is-medium">
                     <span class="icon">
                       <i class="fa fa-plus"></i>
                     </span>
@@ -28,7 +34,16 @@
     <div class="container">
       <div class="columns">
         <div class="column">
-          <div class="panel" v-for="campaign in campaigns">
+          <div class="tabs">
+            <ul>
+              <li v-on:click="tab = 'mj'" v-bind:class="{'is-active': tab === 'mj'}"><a>Vos Campagnes</a></li>
+              <li v-on:click="tab = 'invite'" v-bind:class="{'is-active': tab === 'invite'}"><a><span>Invitations</span> <span v-if="campaigns.invite.length > 0" class="icon tag is-dark is-rounded">{{ campaigns.invite.length }}</span></a></li>
+              <li v-on:click="tab = 'running'" v-bind:class="{'is-active': tab === 'running'}"><a>En cours</a></li>
+              <li v-on:click="tab = 'archive'" v-bind:class="{'is-active': tab === 'archive'}"><a>Archivées</a></li>
+            </ul>
+          </div>
+          {{campaigns}}
+          <div class="panel" v-for="campaign in campaigns[tab]" :key="campaign._id">
             <div class="panel-heading">
               <div class="level">
                 <div class="level-left">
@@ -45,7 +60,7 @@
                       </a>
                     </div>
                     <div class="control" v-if="isMj(campaign, user)">
-                      <a class="button is-danger" v-on:click="deleteCampaign(campaigns)">
+                      <a class="button is-danger" v-on:click="deleteCampaign(campaign._id)">
                         <span class="icon">
                           <i class="fa fa-close"></i>
                         </span>
@@ -73,16 +88,24 @@
         title: 'LeMJ - Campagnes'
       }
     },
-    async asyncData ({req, store}) {
+    data: () => {
+      return {
+        campaigns: {},
+        user: null,
+        tab: 'mj'
+      }
+    },
+    async asyncData ({ req, store }) {
       return {campaigns: await DB.getCampaigns(req), user: store.state.authUser}
     },
     methods: {
-      deleteCampaign: async (campaign) => {
-        // await campaign.delete()
+      deleteCampaign: async (id) => {
+        await DB.deleteCampaign(id)
         this.campaigns = await DB.getCampaigns()
       },
       isMj: (campaign, user) => {
-        return user._id === campaign.mj
+        let uid = user._id.toString()
+        return uid === campaign.mj
       }
     }
   }

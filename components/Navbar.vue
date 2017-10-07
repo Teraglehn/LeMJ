@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+  <nav class="navbar is-dark is-fixed" role="navigation" aria-label="main navigation">
     <div class="container">
       <div class="navbar-brand">
         <a href="/application" class="navbar-item">
@@ -63,5 +63,10 @@
   }
 </script>
 
-<style>
+<style scoped>
+  .navbar.is-fixed {
+    position: fixed;
+    z-index: 999;
+    width: 100vw;
+  }
 </style>

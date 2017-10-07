@@ -32,6 +32,23 @@
             </div>
             <div class="field is-horizontal">
               <div class="field-label">
+                <label class="label">Status</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <div class="control">
+                    <div class="select">
+                      <select name="status" v-model="form.status">
+                        <option value="running">En cours</option>
+                        <option value="archive">Archivée</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="field is-horizontal">
+              <div class="field-label">
                 <label class="label">Visibilité</label>
               </div>
               <div class="field-body">
@@ -106,8 +123,10 @@
           name: '',
           visibility: true,
           join: true,
+          status: 'running',
           players: [],
           sessions: [],
+          assets: [],
           mj: ''
         }
       }

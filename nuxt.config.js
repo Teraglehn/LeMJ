@@ -54,7 +54,7 @@ module.exports = {
   axios: {
     credentials: true,
     init (axios, context) {
-      axios.defaults.baseURL = context.env.BASE_URL;
+      axios.defaults.baseURL = context.env.BASE_URL
     }
   }
 }
