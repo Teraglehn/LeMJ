@@ -36,13 +36,12 @@
         <div class="column">
           <div class="tabs">
             <ul>
-              <li v-on:click="tab = 'mj'" v-bind:class="{'is-active': tab === 'mj'}"><a>Vos Campagnes</a></li>
-              <li v-on:click="tab = 'invite'" v-bind:class="{'is-active': tab === 'invite'}"><a><span>Invitations</span> <span v-if="campaigns.invite.length > 0" class="icon tag is-dark is-rounded">{{ campaigns.invite.length }}</span></a></li>
-              <li v-on:click="tab = 'running'" v-bind:class="{'is-active': tab === 'running'}"><a>En cours</a></li>
-              <li v-on:click="tab = 'archive'" v-bind:class="{'is-active': tab === 'archive'}"><a>Archivées</a></li>
+              <li :click="tab = 'mj'" :class="{'is-active': tab === 'mj'}"><a>Vos Campagnes</a></li>
+              <li :click="tab = 'invite'" :class="{'is-active': tab === 'invite'}"><a><span>Invitations</span> <span v-if="campaigns.invite.length > 0" class="icon tag is-dark is-rounded">{{ campaigns.invite.length }}</span></a></li>
+              <li :click="tab = 'running'" :class="{'is-active': tab === 'running'}"><a>En cours</a></li>
+              <li :click="tab = 'archive'" :class="{'is-active': tab === 'archive'}"><a>Archivées</a></li>
             </ul>
           </div>
-          {{campaigns}}
           <div class="panel" v-for="campaign in campaigns[tab]" :key="campaign._id">
             <div class="panel-heading">
               <div class="level">
@@ -99,7 +98,7 @@
       return {campaigns: await DB.getCampaigns(req), user: store.state.authUser}
     },
     methods: {
-      deleteCampaign: async (id) => {
+      deleteCampaign: async function (id) {
         await DB.deleteCampaign(id)
         this.campaigns = await DB.getCampaigns()
       },
