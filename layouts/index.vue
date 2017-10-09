@@ -1,8 +1,18 @@
 <template>
-  <div class="container is-widescreen">
+  <div class="page">
     <nuxt/>
   </div>
 </template>
 
-<style>
+<script>
+  export default {
+  }
+</script>
+
+<style scoped>
+  .page {
+    min-height: 100vh;
+    background-image: url('/image/background.jpg');
+    background-size: cover;
+  }
 </style>

@@ -1,7 +1,8 @@
 module.exports = {
   css: [
     '@assets/css/bulma.css',
-    '@assets/css/font-awesome.min.css'
+    '@assets/css/font-awesome.min.css',
+    '@assets/css/common.css'
   ],
   /*
   ** Headers of the page
@@ -11,7 +12,7 @@ module.exports = {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'Nuxt.js project' }
+      { hid: 'description', name: 'description', content: 'LeMJ, votre application de jeux de rôle !' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
@@ -47,6 +48,9 @@ module.exports = {
       'axios'
     ]
   },
+  plugins: [
+    '~/plugins/vuelidate'
+  ],
   env: {
     BASE_URL: 'http://192.168.0.10:3000',
     MONGODB_URL: 'mongodb://localhost:27017/lemj'

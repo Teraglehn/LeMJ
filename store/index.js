@@ -31,19 +31,19 @@ export const actions = {
         }
       })
   },
-  register ({ commit }, { username, password }) {
+  register ({ commit }, { username, password, email }) {
     return axios.post('/api/user/register', {
       username,
-      password
+      password,
+      email
     })
-      .then((res) => {
-        commit('SET_USER', res.data)
-      })
-      .catch((error) => {
-        if (error.response.status === 401) {
-          throw new Error(error.response.data.message)
-        }
-      })
+      .then(
+        function (response) {
+          return response.data
+        },
+        function (error) {
+          throw error.response.data
+        })
   },
 
   logout ({ commit }) {

@@ -36,10 +36,10 @@
         <div class="column">
           <div class="tabs">
             <ul>
-              <li :click="tab = 'mj'" :class="{'is-active': tab === 'mj'}"><a>Vos Campagnes</a></li>
-              <li :click="tab = 'invite'" :class="{'is-active': tab === 'invite'}"><a><span>Invitations</span> <span v-if="campaigns.invite.length > 0" class="icon tag is-dark is-rounded">{{ campaigns.invite.length }}</span></a></li>
-              <li :click="tab = 'running'" :class="{'is-active': tab === 'running'}"><a>En cours</a></li>
-              <li :click="tab = 'archive'" :class="{'is-active': tab === 'archive'}"><a>Archivées</a></li>
+              <li v-on:click="tab = 'mj'" :class="{'is-active': tab === 'mj'}"><a>Vos Campagnes</a></li>
+              <li v-on:click="tab = 'invite'" :class="{'is-active': tab === 'invite'}"><a><span>Invitations</span> <span v-if="campaigns.invite.length > 0" class="icon tag is-dark is-rounded">{{ campaigns.invite.length }}</span></a></li>
+              <li v-on:click="tab = 'running'" :class="{'is-active': tab === 'running'}"><a>En cours</a></li>
+              <li v-on:click="tab = 'archive'" :class="{'is-active': tab === 'archive'}"><a>Archivées</a></li>
             </ul>
           </div>
           <div class="panel" v-for="campaign in campaigns[tab]" :key="campaign._id">

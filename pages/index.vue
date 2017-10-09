@@ -1,6 +1,6 @@
 <template>
-  <div class="columns is-centered">
-    <div class="column is-half-desktop">
+  <div class="columns is-gapless is-centered login-container">
+    <div class="column is-12-mobile is-half-tablet is-3-widescreen login-box">
       <section class="hero">
         <div class="hero-body">
           <div class="container">
@@ -8,53 +8,44 @@
               Bienvenue sur LeMJ
             </h1>
             <h2 class="subtitle">
-              Connectez vous pour accéder à l'application
+              Votre application de Jeux de Rôle !
             </h2>
           </div>
         </div>
       </section>
-      <form @submit.prevent="login">
-        <div class="field">
-          <label class="label">Identifiant</label>
-          <div class="control has-icons-left has-icons-right">
-            <input class="input" type="text" v-model="form.username">
-            <span class="icon is-small is-left">
-            <i class="fa fa-user"></i>
-          </span>
-          </div>
-        </div>
-        <div class="field">
-          <label class="label">Mot de passe</label>
-          <div class="control has-icons-left has-icons-right">
-            <input class="input" type="password" v-model="form.password">
-            <span class="icon is-small is-left">
-            <i class="fa fa-key"></i>
-          </span>
-          </div>
-        </div>
-        <label class="checkbox">
-          <input type="checkbox" v-model="form.remember">
-          Remember me
-        </label>
-        <div class="field is-grouped is-grouped-centered">
-          <p class="control">
-            <a v-on:click="login" class="button is-primary">
-              Connexion
+      <div class="tabs is-boxed is-fullwidth">
+        <ul>
+          <li :class="{'is-active': mode === 'login'}" v-on:click="mode = 'login'">
+            <a>
+              <span class="icon is-small"><i class="fa fa-user"></i></span>
+              <span>Se connecter</span>
             </a>
-          </p>
-          <p v-on:click="register" class="control">
-            <a class="button is-light">
-              S'enregistrer
+          </li>
+          <li :class="{'is-active': mode === 'register'}" v-on:click="mode = 'register'">
+            <a>
+              <span class="icon is-small"><i class="fa fa-sign-in"></i></span>
+              <span>S'enregistrer</span>
             </a>
-          </p>
-        </div>
-      </form>
+          </li>
+        </ul>
+      </div>
+      <section class="form-box">
+        <Login v-show="mode === 'login'"></Login>
+        <Register v-show="mode === 'register'"></Register>
+      </section>
     </div>
   </div>
 </template>
 
 <script>
+  import Login from '../components/Login.vue'
+  import Register from '../components/Register.vue'
+
   export default {
+    components: {
+      Login,
+      Register
+    },
     middleware: 'notauth',
     layout: 'index',
     head () {
@@ -65,37 +56,29 @@
     scrollToTop: true,
     data () {
       return {
-        form: {
-          username: '',
-          password: '',
-          remember: false
-        }
-      }
-    },
-    methods: {
-      async register () {
-        try {
-          await this.$store.dispatch('register', {
-            username: this.form.username,
-            password: this.form.password
-          })
-        } catch (e) {
-        }
-      },
-      async login () {
-        try {
-          await this.$store.dispatch('login', {
-            username: this.form.username,
-            password: this.form.password,
-            remember: this.form.remember
-          })
-          this.$router.push('application')
-        } catch (e) {
-        }
+        mode: 'login'
       }
     }
   }
 </script>
 
 <style>
+  .login-container {
+    max-width: 100vw;
+    min-height: 100vh;
+    padding: 50px 0;
+    display: flex;
+    flex-direction:column;
+    align-items: center;
+  }
+  .login-box {
+    max-width:100%;
+    background-color: white;
+    border: 1px solid #d1d1d1;
+    border-radius: 4px;
+  }
+
+  .form-box {
+    padding: 10px;
+  }
 </style>

@@ -1,6 +1,7 @@
 let express = require('express')
 let router = express.Router()
 let crypto = require('crypto')
+let {body, validationResult} = require('express-validator/check')
 
 router.use(function (req, res, next) {
   req.hash = crypto.createHash('sha256')
@@ -15,14 +16,18 @@ router.post('/login', function (req, res) {
 
   users.findOne({id: hash.digest('hex')}, {})
     .then((user) => {
-      if (req.body.remember) {
-        res.cookie('autoLogin', user.id)
+      if (user) {
+        if (req.body.remember) {
+          res.cookie('autoLogin', user.id, {maxAge: 60 * 60 * 24 * 30})
+        }
+        delete user.id
+        req.session.authUser = user
+        res.json(user)
+      } else {
+        res.status(401).json({ message: 'Bad credentials' })
       }
-      delete user.id
-      req.session.authUser = user
-      res.json(user)
     }, (e) => {
-      res.status(401).json({ message: 'Bad credentials' })
+      res.status(500)
     })
 })
 
@@ -32,27 +37,47 @@ router.post('/logout', function (req, res) {
   res.json({ message: 'Logged out' })
 })
 
-router.post('/register', function (req, res) {
+router.post('/register', [
+  body('username').exists().withMessage('Vous devez fournir un identifiant')
+    .isAlphanumeric('fr-FR').withMessage('L\'identifiant doit être au format alphanumérique !')
+    .custom((value, { req }) => {
+      let db = req.db
+      let users = db.get('users')
+      return users.findOne({username: req.body.username}, {}).then(function (user) {
+        if (user) {
+          throw new Error('L\'identifiant existe déjà')
+        } else {
+          return true
+        }
+      })
+    }).withMessage('L\'identifiant existe déjà !')
+    .isLength({ min: 4 }).withMessage('L\'identifiant doit faire au moins 4 caractères de long !'),
+  body('email').exists().withMessage('Vous devez fournir un email')
+    .isEmail().withMessage('L\'email n\'est pas valide !'),
+  body('password').exists().withMessage('Vous devez renseigner un mot de passe !')
+    .isLength({ min: 8 }).withMessage('Le mot de passe doit faire au moins 8 caractères de long !')
+], function (req, res) {
   let db = req.db
   let hash = req.hash
   let users = db.get('users')
   hash.update(req.body.username + ':' + req.body.password)
 
-  users.findOne({username: req.body.username}, {}).then(
-    function (user) {
-      if (!user) {
-        users.insert({
-          username: req.body.username,
-          id: hash.digest('hex')
-        }, {}, function () {
-          res.json({ message: 'Registered successfully' })
-        })
-      } else {
-        res.status(401).json({
-          message: 'Username already exist'
-        })
-      }
+  try {
+    validationResult(req).throw()
+
+    users.insert({
+      username: req.body.username,
+      email: req.body.email,
+      id: hash.digest('hex')
+    }, {}, function () {
+      res.json({ message: 'Enregistrement réussi !' })
     })
+  } catch (err) {
+    res.status(400).json({
+      errors: err.mapped()
+    })
+  }
+
 })
 
 module.exports = router
