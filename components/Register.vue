@@ -1,7 +1,6 @@
 <template>
   <form @submit.prevent="register">
     <div class="notification" :class="{'is-success': message.type === 'success'}" v-for="message in messages">
-      <button class="delete"></button>
       {{message.message}}
     </div>
     <div class="field">

@@ -24,11 +24,9 @@ export const actions = {
     })
       .then((res) => {
         commit('SET_USER', res.data)
-      })
-      .catch((error) => {
-        if (error.response.status === 401) {
-          throw new Error('Bad credentials')
-        }
+        return res
+      }).catch(function (error) {
+        throw error.response
       })
   },
   register ({ commit }, { username, password, email }) {

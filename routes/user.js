@@ -8,27 +8,35 @@ router.use(function (req, res, next) {
   next()
 })
 
-router.post('/login', function (req, res) {
+router.post('/login', [
+  body('username').exists().withMessage('Vous devez fournir un identifiant'),
+  body('password').exists().withMessage('Vous devez renseigner un mot de passe !')
+], function (req, res) {
   let db = req.db
   let hash = req.hash
   let users = db.get('users')
   hash.update(req.body.username + ':' + req.body.password)
 
-  users.findOne({id: hash.digest('hex')}, {})
-    .then((user) => {
-      if (user) {
-        if (req.body.remember) {
-          res.cookie('autoLogin', user.id, {maxAge: 60 * 60 * 24 * 30})
+  try {
+    validationResult(req).throw()
+
+    users.findOne({id: hash.digest('hex')}, {})
+      .then((user) => {
+        if (user) {
+          delete user.id
+          req.session.authUser = user
+          res.json(user)
+        } else {
+          res.status(401).json({ message: 'L\'identifiant ou le mot de passe est incorrect' })
         }
-        delete user.id
-        req.session.authUser = user
-        res.json(user)
-      } else {
-        res.status(401).json({ message: 'Bad credentials' })
-      }
-    }, (e) => {
-      res.status(500)
+      }, (e) => {
+        res.status(500)
+      })
+  } catch (err) {
+    res.status(400).json({
+      errors: err.mapped()
     })
+  }
 })
 
 router.post('/logout', function (req, res) {

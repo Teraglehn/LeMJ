@@ -44,24 +44,9 @@ app.use(session({
   saveUninitialized: false,
   store: store,
   cookie: {
-    maxAge: 60 * 60
+    maxAge: 1000 * 60 * 60 // 1h
   }
 }))
-
-app.use(function (req, res, next) {
-  if (req.cookies && req.cookies.autoLogin) {
-    let db = req.db
-    let users = db.get('users')
-
-    users.findOne({id: req.cookies.autoLogin}, {})
-      .then((user) => {
-        delete user.id
-        req.session.authUser = user
-      })
-  }
-
-  next()
-})
 
 app.use('/api', api)
 
